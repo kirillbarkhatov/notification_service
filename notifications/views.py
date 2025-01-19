@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import generics
 
-# Create your views here.
+from .models import Notify
+from .serializers import NotifySerializer
+
+
+class NotifyCreateApiView(generics.CreateAPIView):
+    """Создание уведомления"""
+
+    serializer_class = NotifySerializer
+
