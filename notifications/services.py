@@ -1,14 +1,15 @@
 from datetime import datetime
+
+import requests
 from django.core.mail import send_mail
 from django.utils.timezone import now
 
-import requests
-
 from config.settings import BOT_TOKEN, DEFAULT_FROM_EMAIL
-from .models import NotifyAttempt, Notify
+
+from .models import Notify, NotifyAttempt
 
 
-def send_telegram_notify(chat_id, notify_instance):
+def send_telegram_notify(chat_id: str, notify_instance: Notify) -> dict:
     """Сервис для отправки уведомлений в телеграм"""
 
     message = notify_instance.message
@@ -67,7 +68,7 @@ def send_telegram_notify(chat_id, notify_instance):
         }
 
 
-def send_email_notify(recipient, notify_instance, subject="Уведомление"):
+def send_email_notify(recipient: str, notify_instance: Notify, subject: str = "Уведомление") -> dict:
     """
     Сервис для отправки уведомлений по почте и сохранения статуса попытки.
 

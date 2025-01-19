@@ -1,8 +1,11 @@
-from rest_framework import generics
-from rest_framework.response import Response
-from rest_framework import status
-from django.utils.timezone import now
 from datetime import timedelta
+from typing import Any, Dict
+
+from django.utils.timezone import now
+from rest_framework import generics, serializers, status
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 from .serializers import NotifySerializer
 from .tasks import process_notification
 
@@ -19,7 +22,9 @@ class NotifyCreateApiView(generics.CreateAPIView):
     }
     Параметр message содержит обычный текст, который будет отправлен в сообщении
 
-    Параметр recepient может содержать одного получателя или список получателей. При этом необходимо определять для каждого получателя, предоставлен адрес для отправки на почту или в telegram. В получателе telegram всегда только числа, почта оформлена по общей маске почтового адреса.
+    Параметр recepient может содержать одного получателя или список получателей.
+    При этом необходимо определять для каждого получателя, предоставлен адрес для отправки на почту или в telegram.
+    В получателе telegram всегда только числа, почта оформлена по общей маске почтового адреса.
 
     Параметр delay отвечает за задержку отправки, где:
 
@@ -32,7 +37,7 @@ class NotifyCreateApiView(generics.CreateAPIView):
 
     serializer_class = NotifySerializer
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer: serializers.BaseSerializer) -> None:
         """
         Переопределяем метод для выполнения действий после создания объекта Notify.
         """
@@ -51,9 +56,9 @@ class NotifyCreateApiView(generics.CreateAPIView):
             raise ValueError("Величина задержки отправки указана некорректно")
 
         # Планируем задачу Celery
-        process_notification.apply_async(args=[notify_instance.id], eta=eta)
+        process_notification.apply_async(args=[notify_instance.id], eta=eta)  # type: ignore
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request: Request, *args: Any, **kwargs: Dict[str, Any]) -> Response:
         """
         Переопределяем метод create для возврата кастомного ответа.
         """

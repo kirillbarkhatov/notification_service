@@ -5,9 +5,9 @@ class Notify(models.Model):
     """Модель уведомления"""
 
     DELAY_CHOICES = [
-        (0, 'Отправить без задержки'),
-        (1, 'Отправить с задержной 1 час'),
-        (2, 'Отправить с задержной 2 часа'),
+        (0, "Отправить без задержки"),
+        (1, "Отправить с задержной 1 час"),
+        (2, "Отправить с задержной 2 часа"),
     ]
 
     message = models.CharField(max_length=1024, verbose_name="Сообщение")
@@ -15,7 +15,7 @@ class Notify(models.Model):
     delay = models.IntegerField(choices=DELAY_CHOICES, verbose_name="Задержка отправки")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.message[:15]
 
     class Meta:
@@ -76,7 +76,7 @@ class NotifyAttempt(models.Model):
         verbose_name="Уведомление",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.pk} - {self.attempted_at}"
 
     class Meta:
